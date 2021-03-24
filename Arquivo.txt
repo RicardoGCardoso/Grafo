@@ -1,0 +1,11 @@
+A -1 B
+A -2 D
+B -3 C
+B -4 D
+B -5 E
+C -6 E
+D -7 E
+D -8 F
+E -9 F
+E -W G
+F -Y G
