@@ -12,6 +12,9 @@ namespace Grafo
     {
         static void Main(string[] args)
         {
+            int[,] MatrizAdjacencia;
+            int count = 0;
+
             Console.ForegroundColor = ConsoleColor.Red;
             List<Vertice> _verticesGrafo = new List<Vertice>();
             List<string> _TodasArestas = new List<string>();
@@ -21,27 +24,35 @@ namespace Grafo
                 _TodasArestas.Add(line.ToArray()[3].ToString());
                 if (_verticesGrafo.Where(x => x.Nome == line.ToArray()[0].ToString()).FirstOrDefault() == null)
                 {
-                    _verticesGrafo.Add(new Vertice(line.ToArray()[0].ToString()));
+                    Vertice novo = new Vertice(line.ToArray()[0].ToString());
+                    _verticesGrafo.Add(novo);
                 }
                 if (_verticesGrafo.Where(x => x.Nome == line.ToArray()[5].ToString()).FirstOrDefault() == null)
                 {
                     _verticesGrafo.Add(new Vertice(line.ToArray()[5].ToString()));
                 }
+                count++;
             }
+
+            MatrizAdjacencia = new int[count, count];
+
+
             Console.WriteLine("TODOS OS VÉRTICES DO GRAFO!");
             foreach (Vertice obj in _verticesGrafo)
             {
                 Console.WriteLine(obj.Nome);
             }
-            int count = 0;
+            
             foreach (string line in lines)
             {
                 Vertice no = _verticesGrafo.Where(x => x.Nome == line.ToArray()[0].ToString()).FirstOrDefault();
                 Vertice no2 = _verticesGrafo.Where(x => x.Nome == line.ToArray()[5].ToString()).FirstOrDefault();
                 if (no.Arestas.Where(y => y.No1.Nome == no.Nome && y.No2.Nome == no2.Nome).FirstOrDefault() == null)
-                    no.ConectarArestas(no2, line.ToArray()[3].ToString());
+                {
+                    no.ConectarArestas(no2, line.ToArray()[3].ToString(), Convert.ToInt32(line.ToArray()[3].ToString()));
+                }
                 else if (no2.Arestas.Where(y => y.No1.Nome == no.Nome && y.No2.Nome == no2.Nome).FirstOrDefault() == null)
-                    no2.ConectarArestas(no, line.ToArray()[3].ToString());
+                    no2.ConectarArestas(no, line.ToArray()[3].ToString(), Convert.ToInt32(line.ToArray()[3].ToString()));
             }
             //------------------------------------------------------------------------------------
             // MATRIZ DE ADJACENCIA
@@ -50,16 +61,29 @@ namespace Grafo
             foreach (Vertice obj in _verticesGrafo)
                 Console.Write("\t" + obj.Nome);
             Console.WriteLine("\n");
+
+            int i = 0, j = 0;
             foreach (Vertice obj in _verticesGrafo)
             {
                 Console.Write(obj.Nome);
                 foreach (Vertice second in _verticesGrafo)
                 {
-                    if (obj.Arestas.Where(x => x.No1.Nome == second.Nome).FirstOrDefault() != null)
+                    Aresta aux = obj.Arestas.Where(x => x.No1.Nome == second.Nome || x.No2.Nome == second.Nome).FirstOrDefault();
+                    if (aux != null && obj.Nome != second.Nome)
+                    {
+                        MatrizAdjacencia[i, j] = aux.Peso;
                         Console.Write("\t1");
+                    }
                     else
+                    {
+                        MatrizAdjacencia[i, j] = 0;
                         Console.Write("\t0");
+                    }
+                    aux = null;
+                    j++;
                 }
+                i++;
+                j = 0;
                 Console.WriteLine("\n");
             }
 
@@ -102,9 +126,40 @@ namespace Grafo
                 }
                 Console.WriteLine("\n");
             }
+            
+            for(int a = 0; a < count; a++)
+            {
+                for(int b = 0; b < count; b++)
+                {
+                    Console.Write("\t" + MatrizAdjacencia[a, b]);
+                }
+                Console.Write("\n");
+            }
+
+            Dijkstra minimo = new Dijkstra();
+            minimo.TotalVertices = count-1;
+            minimo.Calcular(MatrizAdjacencia, 0, count-1);
+
             Console.ReadLine();
             //Console.Write(obj.Nome + " - " + obj.Arestas.f);
             //Console.WriteLine("VIZINHOS: ")
+
+            /**
+             *      1       3
+             * A ------ e ---C
+             * |        |   /
+             * | 6    4 |  /2
+             * |        | /
+             * B------- D/
+             *      8
+             *      
+             *      A = 0
+             *      E = 1
+             *      B = 2
+             *      D = 3
+             *      C = 4
+             *      
+             **/
         }
     }
 }

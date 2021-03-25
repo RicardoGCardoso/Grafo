@@ -23,11 +23,12 @@ namespace Grafo
         }
 
 
+
         public IEnumerable<Aresta> Arestas => _Arestas;
 
-        public void ConectarArestas(Vertice n_vertice, string NomeAresta)
+        public void ConectarArestas(Vertice n_vertice, string NomeAresta, int Peso)
         {
-            Aresta.Criar(n_vertice, this, NomeAresta);
+            Aresta.Criar(n_vertice, this, NomeAresta, Peso);
         }
     }
 }
